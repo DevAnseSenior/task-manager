@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Database } from './database.js';
 import { buildRoutePath } from './utils/build-route-path.js';
+import { validateTask } from './utils/validate-task.js';
 
 const database = new Database;
 
@@ -20,10 +21,12 @@ export const routes = [
         handler: (req, res) => {
             const { title, description } = req.body;
 
-            if (!title || !description) {
+            const validationError = validateTask({ title, description });
+
+            if (validationError) {
                 return res
-                    .writeHead(400, {'Content-Type': 'application/json'})
-                    .end(JSON.stringify({error: 'The fields title and description are mandatory.'}));
+                    .writeHead(400, { 'Content-Type': 'application/json' })
+                    .end(JSON.stringify({ error: validationError}));
             }
     
             const task = {
@@ -48,11 +51,14 @@ export const routes = [
             const { id } = req.params;
             const { title, description } = req.body;
 
-            // if (!title || !description) {
-            //     return res
-            //         .writeHead(400, {'Content-Type': 'application/json'})
-            //         .end(JSON.stringify({error: 'The fields title and description are mandatory.'}));
-            // }
+            const validationError = validateTask({ title, description });
+
+            if (validationError) {
+                return res
+                    .writeHead(400, { 'Content-Type': 'application/json' })
+                    .end(JSON.stringify({ error: validationError}));
+            }
+            
             const task = database.find('tasks', id);
     
             database.update('tasks', id, {
