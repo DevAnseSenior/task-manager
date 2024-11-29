@@ -18,6 +18,12 @@ export const routes = [
         path: '/tasks',
         handler: (req, res) => {
             const { title, description } = req.body;
+
+            if (!title || !description) {
+                return res
+                    .writeHead(400, {'Content-Type': 'application/json'})
+                    .end(JSON.stringify({error: 'The fields title and description are mandatory.'}));
+            }
     
             const task = {
                 id: randomUUID(),
