@@ -28,7 +28,7 @@ export class Database {
     find(table, id) {
         const data = this.#database[table] ?? [];
 
-        return data.find(row => row.id === id) || {};
+        return data.find(row => row.id === id) || null;
     }
 
     insert(table, data) {
