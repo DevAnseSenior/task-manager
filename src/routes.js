@@ -45,6 +45,24 @@ export const routes = [
         },
     },
     {
+        method: 'PATCH',
+        path: buildRoutePath('/tasks/:id/complete'),
+        handler: (req, res) => {
+            const { id } = req.params;
+            
+            const task = database.find('tasks', id);
+    
+            database.update('tasks', id, {
+                ...task,
+                completed: true,
+                completed_at: new Date().toISOString(),
+            });
+
+
+            return res.writeHead(204).end();
+        },
+    },
+    {
         method: 'PUT',
         path: buildRoutePath('/tasks/:id'),
         handler: (req, res) => {
@@ -58,7 +76,7 @@ export const routes = [
                     .writeHead(400, { 'Content-Type': 'application/json' })
                     .end(JSON.stringify({ error: validationError}));
             }
-            
+
             const task = database.find('tasks', id);
     
             database.update('tasks', id, {
